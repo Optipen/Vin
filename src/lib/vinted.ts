@@ -1,3 +1,5 @@
+import { supabase } from "./supabase";
+
 export interface Product {
   id: string;
   title: string;
@@ -68,7 +70,7 @@ Envoi rapide sous 24-48h.
 #destockage #bonplan #neuf`;
 }
 
-export function likeProduct(product: Product): LikedProduct {
+export function buildLikedProduct(product: Product): LikedProduct {
   const vintedPrice = calculateVintedPrice(product.price);
   return {
     ...product,
@@ -80,52 +82,61 @@ export function likeProduct(product: Product): LikedProduct {
   };
 }
 
-export function getLikedProducts(): LikedProduct[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const data = localStorage.getItem("vin-liked");
-    return data ? JSON.parse(data) : [];
-  } catch {
-    return [];
-  }
+export async function getLikedProducts(): Promise<LikedProduct[]> {
+  const { data, error } = await supabase
+    .from("vinswipe_liked")
+    .select("*")
+    .order("liked_at", { ascending: false });
+
+  if (error || !data) return [];
+
+  return data.map((row: any) => ({
+    id: row.id,
+    title: row.title,
+    price: Number(row.price),
+    image: row.image || "",
+    link: row.link || "",
+    category: row.category || "",
+    vintedTitle: row.vinted_title || "",
+    vintedDescription: row.vinted_description || "",
+    vintedCategory: row.vinted_category || "",
+    vintedPrice: Number(row.vinted_price || 0),
+    likedAt: Number(row.liked_at),
+  }));
 }
 
-export function saveLikedProducts(products: LikedProduct[]): void {
-  if (typeof window === "undefined") return;
-  try {
-    localStorage.setItem("vin-liked", JSON.stringify(products));
-  } catch {}
+export async function addLikedProduct(product: Product): Promise<void> {
+  const liked = buildLikedProduct(product);
+  await supabase.from("vinswipe_liked").upsert({
+    id: liked.id,
+    title: liked.title,
+    price: liked.price,
+    image: liked.image,
+    link: liked.link,
+    category: liked.category,
+    vinted_title: liked.vintedTitle,
+    vinted_description: liked.vintedDescription,
+    vinted_category: liked.vintedCategory,
+    vinted_price: liked.vintedPrice,
+    liked_at: liked.likedAt,
+  });
 }
 
-export function addLikedProduct(product: Product): LikedProduct[] {
-  const liked = getLikedProducts();
-  if (liked.some((p) => p.id === product.id)) return liked;
-  const newLiked = [likeProduct(product), ...liked];
-  saveLikedProducts(newLiked);
-  return newLiked;
+export async function removeLikedProduct(id: string): Promise<void> {
+  await supabase.from("vinswipe_liked").delete().eq("id", id);
 }
 
-export function removeLikedProduct(id: string): LikedProduct[] {
-  const liked = getLikedProducts().filter((p) => p.id !== id);
-  saveLikedProducts(liked);
-  return liked;
+export async function getSkippedIds(): Promise<Set<string>> {
+  const { data, error } = await supabase
+    .from("vinswipe_skipped")
+    .select("id");
+
+  if (error || !data) return new Set();
+  return new Set(data.map((row: any) => row.id));
 }
 
-export function getSkippedIds(): Set<string> {
-  if (typeof window === "undefined") return new Set();
-  try {
-    const data = localStorage.getItem("vin-skipped");
-    return new Set(data ? JSON.parse(data) : []);
-  } catch {
-    return new Set();
-  }
-}
-
-export function addSkippedId(id: string): void {
-  if (typeof window === "undefined") return;
-  try {
-    const skipped = getSkippedIds();
-    skipped.add(id);
-    localStorage.setItem("vin-skipped", JSON.stringify([...skipped]));
-  } catch {}
+export async function addSkippedId(id: string): Promise<void> {
+  await supabase
+    .from("vinswipe_skipped")
+    .upsert({ id, skipped_at: Date.now() });
 }

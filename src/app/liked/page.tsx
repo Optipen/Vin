@@ -10,11 +10,12 @@ export default function LikedPage() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
-    setLiked(getLikedProducts());
+    getLikedProducts().then(setLiked);
   }, []);
 
-  const handleRemove = (id: string) => {
-    const updated = removeLikedProduct(id);
+  const handleRemove = async (id: string) => {
+    await removeLikedProduct(id);
+    const updated = await getLikedProducts();
     setLiked(updated);
     if (expandedId === id) setExpandedId(null);
   };

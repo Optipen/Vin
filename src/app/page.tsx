@@ -38,8 +38,10 @@ export default function Home() {
         return;
       }
 
-      const skipped = getSkippedIds();
-      const liked = getLikedProducts();
+      const [skipped, liked] = await Promise.all([
+        getSkippedIds(),
+        getLikedProducts(),
+      ]);
       const likedIds = new Set(liked.map((p) => p.id));
 
       const filtered = (data.products || []).filter(
@@ -49,6 +51,7 @@ export default function Home() {
       setProducts((prev) =>
         pageNum === 1 ? filtered : [...prev, ...filtered]
       );
+      setLikedCount(liked.length);
     } catch {
       setError("Erreur de connexion. Réessaye.");
     } finally {
@@ -58,7 +61,6 @@ export default function Home() {
 
   useEffect(() => {
     fetchProducts(1);
-    setLikedCount(getLikedProducts().length);
   }, [fetchProducts]);
 
   useEffect(() => {
@@ -73,38 +75,25 @@ export default function Home() {
     }
   }, [currentIndex, products.length, loading, page, fetchProducts]);
 
-  const handleLike = () => {
+  const handleLike = async () => {
     const product = products[currentIndex];
     if (!product) return;
-    const newLiked = addLikedProduct(product);
-    setLikedCount(newLiked.length);
     setCurrentIndex((i) => i + 1);
+    setLikedCount((c) => c + 1);
+    await addLikedProduct(product);
   };
 
-  const handleSkip = () => {
+  const handleSkip = async () => {
     const product = products[currentIndex];
     if (!product) return;
-    addSkippedId(product.id);
     setCurrentIndex((i) => i + 1);
-  };
-
-  const handleReset = () => {
-    if (typeof window !== "undefined") {
-      try {
-        localStorage.removeItem("vin-skipped");
-      } catch {}
-    }
-    setPage(1);
-    setCurrentIndex(0);
-    setProducts([]);
-    fetchProducts(1);
+    await addSkippedId(product.id);
   };
 
   const current = products[currentIndex];
 
   return (
     <div className="min-h-dvh flex flex-col" style={{ paddingBottom: "80px" }}>
-      {/* Header */}
       <header
         className="sticky top-0 z-40 flex items-center justify-center py-3 px-4"
         style={{
@@ -122,7 +111,6 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Main content */}
       <main className="flex-1 flex flex-col items-center justify-center p-4">
         {loading && products.length === 0 ? (
           <div className="flex flex-col items-center gap-4">
@@ -152,13 +140,9 @@ export default function Home() {
             <p className="text-lg font-medium">
               Tu as vu tous les produits !
             </p>
-            <button
-              onClick={handleReset}
-              className="px-6 py-3 rounded-xl font-bold text-white"
-              style={{ background: "var(--accent)" }}
-            >
-              Recharger les produits
-            </button>
+            <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+              Reviens plus tard pour les nouveaux arrivages.
+            </p>
           </div>
         ) : (
           <>
@@ -169,7 +153,6 @@ export default function Home() {
               onSkip={handleSkip}
             />
 
-            {/* Action buttons */}
             <div className="flex items-center gap-8 mt-6">
               <button
                 onClick={handleSkip}
