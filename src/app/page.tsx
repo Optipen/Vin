@@ -112,12 +112,14 @@ export default function Home() {
           borderBottom: "1px solid var(--border)",
         }}
       >
-        <h1 className="text-xl font-black" style={{ color: "var(--accent)" }}>
-          VinSwipe
-        </h1>
-        <span className="text-xs ml-2" style={{ color: "var(--text-secondary)" }}>
-          Stokomani → Vinted
-        </span>
+        <div className="flex flex-col items-center">
+          <h1 className="text-xl font-black" style={{ color: "var(--accent)" }}>
+            VinSwipe
+          </h1>
+          <span className="text-xs" style={{ color: "var(--text-secondary)" }}>
+            Stokomani Lagny-sur-Marne → Vinted
+          </span>
+        </div>
       </header>
 
       {/* Main content */}
@@ -195,10 +197,16 @@ export default function Home() {
             </div>
 
             <p
-              className="mt-4 text-sm"
+              className="mt-3 text-sm"
               style={{ color: "var(--text-secondary)" }}
             >
               {currentIndex + 1} / {products.length} produits
+            </p>
+            <p
+              className="mt-1 text-xs text-center px-8"
+              style={{ color: "var(--text-secondary)" }}
+            >
+              Vérifie la dispo en magasin à Lagny-sur-Marne
             </p>
           </>
         )}
