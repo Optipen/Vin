@@ -34,25 +34,21 @@ export function generateVintedTitle(title: string): string {
 export function guessVintedCategory(title: string, category: string): string {
   const text = `${title} ${category}`.toLowerCase();
 
-  if (/t-shirt|tee.?shirt/i.test(text)) return "T-shirts";
-  if (/pull|sweat|hoodie/i.test(text)) return "Pulls & Sweats";
-  if (/pantalon|jean|jogger/i.test(text)) return "Pantalons & Jeans";
-  if (/veste|blouson|manteau/i.test(text)) return "Vestes & Manteaux";
-  if (/robe/i.test(text)) return "Robes";
-  if (/jupe/i.test(text)) return "Jupes";
-  if (/short|bermuda/i.test(text)) return "Shorts";
-  if (/chaussur|basket|sneaker|botte/i.test(text)) return "Chaussures";
-  if (/sac|pochette|sacoche/i.test(text)) return "Sacs";
-  if (/bijou|collier|bracelet|bague/i.test(text)) return "Bijoux";
-  if (/parfum|cosmétique|maquillage|beauté|soin/i.test(text)) return "Beauté";
-  if (/jouet|peluche|jeu/i.test(text)) return "Jouets";
-  if (/déco|maison|coussin|bougie|vase/i.test(text)) return "Maison & Déco";
-  if (/enfant|bébé|kid/i.test(text)) return "Enfants";
-  if (/homme|man/i.test(text)) return "Homme";
-  if (/femme|woman/i.test(text)) return "Femme";
-  if (/accessoire|ceinture|écharpe|bonnet/i.test(text)) return "Accessoires";
-  if (/sport|fitness/i.test(text)) return "Sport";
-  if (/linge|serviette|drap/i.test(text)) return "Linge de maison";
+  if (/jouet|peluche|jeu|puzzle|figurine|lego|playmobil/i.test(text)) return "Jouets";
+  if (/déco|maison|coussin|bougie|vase|cadre|miroir|lampe/i.test(text)) return "Maison & Déco";
+  if (/parfum|cosmétique|maquillage|beauté|soin|crème visage/i.test(text)) return "Beauté";
+  if (/sac|pochette|sacoche|valise|trousse/i.test(text)) return "Sacs & Bagagerie";
+  if (/bijou|collier|bracelet|bague|montre/i.test(text)) return "Bijoux & Montres";
+  if (/sport|fitness|musculation|yoga/i.test(text)) return "Sport";
+  if (/outil|bricolage|tournevis|perceuse|clé/i.test(text)) return "Bricolage & Outils";
+  if (/high.?tech|écouteur|enceinte|casque|câble|chargeur/i.test(text)) return "High-Tech & Accessoires";
+  if (/livre|papeterie|stylo|cahier|agenda/i.test(text)) return "Papeterie & Livres";
+  if (/jardin|plante|pot|arrosoir|barbecue/i.test(text)) return "Jardin & Extérieur";
+  if (/cuisine|poêle|casserole|ustensile|couteau|planche/i.test(text)) return "Cuisine & Arts de la table";
+  if (/rangement|boîte|panier|étagère/i.test(text)) return "Rangement";
+  if (/bébé|bebe|puériculture|biberon|poussette/i.test(text)) return "Puériculture";
+  if (/accessoire|lunette|ceinture|porte.?clé|portefeuille/i.test(text)) return "Accessoires";
+  if (/auto|moto|voiture/i.test(text)) return "Auto & Moto";
 
   return category || "Divers";
 }

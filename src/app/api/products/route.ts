@@ -10,7 +10,8 @@ interface Product {
   category: string;
 }
 
-const FOOD_KEYWORDS = [
+const EXCLUDED_KEYWORDS = [
+  // Alimentaire
   "alimenta", "nourriture", "gâteau", "gateau", "biscuit", "chocolat",
   "bonbon", "chips", "boisson", "jus", "café", "cafe", "thé", "the",
   "sucre", "farine", "pâte", "pate", "riz", "huile", "vinaigre",
@@ -22,49 +23,66 @@ const FOOD_KEYWORDS = [
   "eau minérale", "eau minerale", "sirop", "nectar", "compote",
   "fruit sec", "cacahuète", "cacahuete", "amande", "noix", "noisette",
   "pistache", "olive", "cornichon", "sardine", "thon", "saumon",
-  "jambon", "saucisson", "pâté", "pate", "rillette", "foie gras",
+  "jambon", "saucisson", "pâté", "rillette", "foie gras",
   "nutella", "speculoos", "haribo", "coca", "pepsi", "fanta",
   "oasis", "orangina", "schweppes", "perrier", "evian", "volvic",
   "capsule nespresso", "dosette", "infusion", "tisane",
   "protéine alimentaire", "barre énergétique", "barre energetique",
   "croquette", "pâtée", "patee", "friandise chien", "friandise chat",
   "litière", "litiere",
+  // Vêtements
+  "t-shirt", "tee-shirt", "tee shirt", "polo", "chemise", "chemisier",
+  "pull", "sweat", "hoodie", "gilet", "cardigan", "veste", "blouson",
+  "manteau", "doudoune", "parka", "imperméable", "impermeable",
+  "pantalon", "jean", "jogger", "legging", "caleçon", "calecon",
+  "short", "bermuda", "robe", "jupe", "combinaison",
+  "sous-vêtement", "sous-vetement", "slip", "boxer", "culotte",
+  "soutien-gorge", "soutien gorge", "brassière", "brassiere",
+  "chaussette", "collant", "bas", "body", "débardeur", "debardeur",
+  "maillot", "pyjama", "nuisette", "peignoir", "kimono",
+  "costume", "cravate", "noeud papillon",
+  "mode-femme", "mode-homme", "mode-enfant",
+  // Produits ménagers / entretien
+  "lessive", "adoucissant", "détergent", "detergent", "nettoyant",
+  "javel", "désinfectant", "desinfectant", "liquide vaisselle",
+  "éponge", "eponge", "serpillière", "serpilliere", "balai",
+  "sac poubelle", "papier toilette", "essuie-tout", "mouchoir",
+  "sopalin", "dépoussiérant", "depoussiérant", "cirage",
+  "détachant", "detachant", "anticalcaire", "déboucheur", "deboucheur",
+  "insecticide", "répulsif", "repulsif", "désodorisant", "desodorisant",
+  "couche pampers", "couche bébé", "couche bebe",
+  // Linge de maison / textile maison
+  "rideau", "voilage", "store", "couverture", "plaid", "couette",
+  "oreiller", "traversin", "drap", "housse de couette", "taie",
+  "nappe", "serviette de table", "torchon", "gant de toilette",
+  "serviette de bain", "tapis de bain", "descente de lit",
+  "protège-matelas", "protege-matelas", "alèse", "alese",
+  // Chaussures
+  "chaussure", "basket", "sneaker", "botte", "bottine",
+  "sandale", "tong", "escarpin", "mocassin", "ballerine",
+  "pantoufle", "chausson",
 ];
 
 const VINTED_COLLECTIONS = [
   "arrivages",
-  "mode-femme",
-  "mode-homme",
-  "mode-enfant",
-  "chaussures",
+  "jouets",
   "maison-deco",
   "beaute",
-  "jouets",
   "bagagerie",
-  "linge-de-maison",
   "accessoires",
   "sport",
-  "bebe",
   "puericulture",
+  "high-tech",
+  "multimedia",
+  "papeterie",
+  "bricolage",
+  "jardin",
+  "auto-moto",
 ];
 
-function isFoodProduct(title: string, category: string): boolean {
-  const text = `${title} ${category}`.toLowerCase();
-  return FOOD_KEYWORDS.some((kw) => text.includes(kw));
-}
-
 function isVintedSellable(title: string, category: string): boolean {
-  if (isFoodProduct(title, category)) return false;
-
   const text = `${title} ${category}`.toLowerCase();
-  const excluded = [
-    "alimenta", "épicerie", "epicerie", "boisson", "frais",
-    "surgelé", "surgele", "animalerie", "croquette",
-    "lessive", "liquide vaisselle", "nettoyant", "javel",
-    "papier toilette", "essuie-tout", "mouchoir",
-    "couche pampers", "couche bébé",
-  ];
-  return !excluded.some((kw) => text.includes(kw));
+  return !EXCLUDED_KEYWORDS.some((kw) => text.includes(kw));
 }
 
 async function fetchShopifyJSON(collection: string, page: number): Promise<Product[]> {
